@@ -152,179 +152,125 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Widget _todayCard() {
-    return Material(
-      color: const Color(0xFF18382F),
-      borderRadius: BorderRadius.circular(16),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(16),
-        onTap: () {
-          // TODO: abrir detalle del entrenamiento
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(const SnackBar(content: Text('Full Body Workout')));
-        },
-        child: Padding(
-          padding: const EdgeInsets.all(12),
-          child: Row(
-            children: [
-              Container(
-                width: 48,
-                height: 48,
-                decoration: BoxDecoration(
-                  color: const Color(0xFF1F4A3D),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: const Icon(Icons.fitness_center, color: Colors.white),
-              ),
-              const SizedBox(width: 12),
-              const Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Full Body Workout',
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w600,
-                        fontSize: 15,
-                      ),
-                    ),
-                    SizedBox(height: 4),
-                    Text(
-                      '10 ejercicios • 45 min',
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(color: Colors.white70, fontSize: 13),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(width: 8),
-              const Icon(Icons.play_arrow_rounded, color: Colors.white70),
-            ],
-          ),
-        ),
-      ),
+    return DashboardCard(
+      leading: const Icon(Icons.fitness_center, color: Colors.white),
+      title: 'Full Body Workout',
+      subtitle: '10 ejercicios • 45 min',
+      trailing: const Icon(Icons.play_arrow_rounded, color: Colors.white70),
+      onTap: () {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('Full Body Workout')));
+      },
     );
   }
 
   Widget _goalsCard() {
-    return Material(
-      color: const Color(0xFF18382F),
-      borderRadius: BorderRadius.circular(16),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(16),
-        onTap: () {
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(const SnackBar(content: Text('Objetivo: Correr 5k')));
-        },
-        child: Padding(
-          padding: const EdgeInsets.all(12),
-          child: Row(
-            children: [
-              // Cuadradito (icono por ahora; luego podemos poner imagen)
-              Container(
-                width: 48,
-                height: 48,
-                decoration: BoxDecoration(
-                  color: const Color(0xFF1F4A3D),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: const Icon(Icons.directions_run, color: Colors.white),
-              ),
-              const SizedBox(width: 12),
-
-              // Título + subtítulo
-              const Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Correr 5k',
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w600,
-                        fontSize: 15,
-                      ),
-                    ),
-                    SizedBox(height: 4),
-                    Text(
-                      '3/5 entrenamientos completados',
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(color: Colors.white70, fontSize: 13),
-                    ),
-                  ],
-                ),
-              ),
-
-              const SizedBox(width: 8),
-              const Icon(Icons.arrow_forward_rounded, color: Colors.white70),
-            ],
-          ),
-        ),
-      ),
+    return DashboardCard(
+      leading: const Icon(Icons.directions_run, color: Colors.white),
+      title: 'Correr 5k',
+      subtitle: '3/5 entrenamientos completados',
+      onTap: () {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('Objetivo: Correr 5k')));
+      },
     );
   }
 
   Widget _habitsCard() {
+    return DashboardCard(
+      leading: const Icon(Icons.local_drink, color: Colors.white),
+      title: 'Beber 2L de agua',
+      subtitle: 'Sigue tu ingesta diaria',
+      onTap: () {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Hábito: Beber 2L de agua')),
+        );
+      },
+    );
+  }
+}
+
+class DashboardCard extends StatelessWidget {
+  const DashboardCard({
+    super.key,
+    required this.leading,
+    required this.title,
+    required this.subtitle,
+    this.onTap,
+    this.trailing = const Icon(
+      Icons.arrow_forward_rounded,
+      color: Colors.white70,
+    ),
+    this.bgColor = const Color(0xFF18382F),
+    this.leadingBg = const Color(0xFF1F4A3D),
+  });
+
+  final Widget leading; // icono o imagen (lo que quieras delante)
+  final String title; // texto principal
+  final String subtitle; // texto secundario
+  final VoidCallback? onTap; // acción al tocar
+  final Widget trailing; // flecha/play/etc.
+  final Color bgColor; // color tarjeta
+  final Color leadingBg; // color fondo del cuadrito
+
+  @override
+  Widget build(BuildContext context) {
     return Material(
-      color: const Color(0xFF18382F),
+      color: bgColor,
       borderRadius: BorderRadius.circular(16),
       child: InkWell(
         borderRadius: BorderRadius.circular(16),
-        onTap: () {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Hábito: Beber 2L de agua')),
-          );
-        },
+        onTap: onTap,
         child: Padding(
           padding: const EdgeInsets.all(12),
           child: Row(
             children: [
+              // Cuadradito con fondo y el 'leading' centrado
               Container(
                 width: 48,
                 height: 48,
                 decoration: BoxDecoration(
-                  color: const Color(0xFF1F4A3D),
+                  color: leadingBg,
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: const Icon(Icons.local_drink, color: Colors.white),
+                alignment: Alignment.center,
+                child: leading,
               ),
               const SizedBox(width: 12),
 
-              const Expanded(
+              // Títulos
+              Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Beber 2L de agua',
+                      title,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
+                      style: const TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.w600,
                         fontSize: 15,
                       ),
                     ),
-                    SizedBox(height: 4),
+                    const SizedBox(height: 4),
                     Text(
-                      'Sigue tu ingesta diaria',
+                      subtitle,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: TextStyle(color: Colors.white70, fontSize: 13),
+                      style: const TextStyle(
+                        color: Colors.white70,
+                        fontSize: 13,
+                      ),
                     ),
                   ],
                 ),
               ),
 
               const SizedBox(width: 8),
-              const Icon(Icons.arrow_forward_rounded, color: Colors.white70),
+              trailing,
             ],
           ),
         ),
