@@ -1,3 +1,4 @@
+import 'package:fitmeeasy/screens/routines_screen.dart';
 import 'package:flutter/material.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -42,29 +43,41 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ),
         child: NavigationBar(
           selectedIndex: 0,
-          onDestinationSelected: (i) {},
+          onDestinationSelected: (i) {
+            if (i == 0) return; // ya estás en Home
+            if (i == 3) {
+              Navigator.of(context).pushReplacement(
+                MaterialPageRoute(builder: (_) => const RoutinesScreen()),
+              );
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Sección aún no disponible')),
+              );
+            }
+          },
+
           backgroundColor: const Color(0xFF18382F), // <- más claro
           indicatorColor: const Color(0xFF2A5A4B), // <- resaltado suave
           destinations: const [
             NavigationDestination(
               icon: Icon(Icons.home_outlined),
               selectedIcon: Icon(Icons.home),
-              label: 'Home',
+              label: 'Perfil',
             ),
             NavigationDestination(
               icon: Icon(Icons.storefront_outlined),
               selectedIcon: Icon(Icons.storefront),
-              label: 'Store',
+              label: 'Tienda',
             ),
             NavigationDestination(
               icon: Icon(Icons.show_chart_outlined),
               selectedIcon: Icon(Icons.show_chart),
-              label: 'Progress',
+              label: 'Progreso',
             ),
             NavigationDestination(
               icon: Icon(Icons.fitness_center_outlined),
               selectedIcon: Icon(Icons.fitness_center),
-              label: 'Routines',
+              label: 'Rutinas',
             ),
           ],
         ),
