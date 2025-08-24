@@ -1,6 +1,7 @@
 import 'package:fitmeeasy/screens/routines_screen.dart';
 import 'package:flutter/material.dart';
 import 'store_screen.dart';
+import 'progress_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -49,6 +50,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
             if (i == 1) {
               Navigator.of(context).pushReplacement(
                 MaterialPageRoute(builder: (_) => const StoreScreen()),
+              );
+            } else if (i == 2) {
+              Navigator.of(context).pushReplacement(
+                MaterialPageRoute(builder: (_) => const ProgressScreen()),
               );
             } else if (i == 3) {
               Navigator.of(context).pushReplacement(
