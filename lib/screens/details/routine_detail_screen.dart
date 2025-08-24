@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fitmeeasy/screens/details/day_detail_screen.dart';
 
 class RoutineDetailScreen extends StatelessWidget {
   const RoutineDetailScreen({
@@ -41,9 +42,12 @@ class RoutineDetailScreen extends StatelessWidget {
               title: 'Día 1 — Full Body',
               subtitle: 'Calentamiento + 8 ejercicios',
               onTap: () {
-                ScaffoldMessenger.of(
-                  context,
-                ).showSnackBar(const SnackBar(content: Text('Abrir Día 1')));
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (_) =>
+                        const DayDetailScreen(title: 'Día 1 — Full Body'),
+                  ),
+                );
               },
             ),
             const SizedBox(height: 12),
@@ -52,9 +56,12 @@ class RoutineDetailScreen extends StatelessWidget {
               title: 'Día 2 — Cardio',
               subtitle: 'HIIT 20 min + core',
               onTap: () {
-                ScaffoldMessenger.of(
-                  context,
-                ).showSnackBar(const SnackBar(content: Text('Abrir Día 2')));
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (_) =>
+                        const DayDetailScreen(title: 'Día 1 — Full Body'),
+                  ),
+                );
               },
             ),
             const SizedBox(height: 12),
@@ -63,9 +70,12 @@ class RoutineDetailScreen extends StatelessWidget {
               title: 'Día 3 — Fuerza',
               subtitle: 'Tirón + Empuje',
               onTap: () {
-                ScaffoldMessenger.of(
-                  context,
-                ).showSnackBar(const SnackBar(content: Text('Abrir Día 3')));
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (_) =>
+                        const DayDetailScreen(title: 'Día 1 — Full Body'),
+                  ),
+                );
               },
             ),
           ],
