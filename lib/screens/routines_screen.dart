@@ -1,6 +1,7 @@
 import 'package:fitmeeasy/screens/details/routine_detail_screen.dart';
 import 'package:flutter/material.dart';
 import 'profile_screen.dart'; // para volver a Home desde la bottom bar
+import 'store_screen.dart';
 
 class RoutinesScreen extends StatelessWidget {
   const RoutinesScreen({super.key});
@@ -40,6 +41,10 @@ class RoutinesScreen extends StatelessWidget {
             if (i == 0) {
               Navigator.of(context).pushReplacement(
                 MaterialPageRoute(builder: (_) => const ProfileScreen()),
+              );
+            } else if (i == 1) {
+              Navigator.of(context).pushReplacement(
+                MaterialPageRoute(builder: (_) => const StoreScreen()),
               );
             } else if (i != 3) {
               ScaffoldMessenger.of(context).showSnackBar(
@@ -118,7 +123,7 @@ class RoutinesScreen extends StatelessWidget {
               ),
             ),
             const Divider(color: Colors.white24),
-             _weekHeader('Semana 2'),
+            _weekHeader('Semana 2'),
             ListTile(
               onTap: () {
                 Navigator.of(context).push(

@@ -1,5 +1,6 @@
 import 'package:fitmeeasy/screens/routines_screen.dart';
 import 'package:flutter/material.dart';
+import 'store_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -44,8 +45,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
         child: NavigationBar(
           selectedIndex: 0,
           onDestinationSelected: (i) {
-            if (i == 0) return; // ya estás en Home
-            if (i == 3) {
+            if (i == 0) return;
+            if (i == 1) {
+              Navigator.of(context).pushReplacement(
+                MaterialPageRoute(builder: (_) => const StoreScreen()),
+              );
+            } else if (i == 3) {
               Navigator.of(context).pushReplacement(
                 MaterialPageRoute(builder: (_) => const RoutinesScreen()),
               );
