@@ -25,14 +25,7 @@ class ProgressScreen extends StatelessWidget {
             const SizedBox(height: 8),
             Row(
               children: [
-                Expanded(
-                  child: _statCard(
-                    icon: Icons.local_fire_department, // 🔥
-                    iconBg: const Color(0xFF1F4A3D),
-                    value: '12',
-                    label: 'Racha',
-                  ),
-                ),
+                Expanded(child: _streakCard()),
                 const SizedBox(width: 12),
                 Expanded(
                   child: _statCard(
@@ -44,6 +37,38 @@ class ProgressScreen extends StatelessWidget {
                 ),
               ],
             ),
+            const SizedBox(height: 16),
+            _sectionTitle('Esta semana'),
+            _weekRow(done: const [true, true, false, true, false, false, true]),
+            //_monthSummaryCard(done: 8, target: 16, lastMonthDone: 6),
+            const SizedBox(height: 24),
+
+            _sectionTitle('Historial reciente'),
+            _historyItem(
+              icon: Icons.check_circle,
+              title: 'Día 1 — Full Body',
+              date: 'Lun, 18 Ago',
+              subtitle: '45 min • 10 ejercicios',
+            ),
+            const SizedBox(height: 8),
+            _historyItem(
+              icon: Icons.directions_run,
+              title: 'Cardio & Core',
+              date: 'Sáb, 16 Ago',
+              subtitle: '30 min • HIIT',
+            ),
+            const SizedBox(height: 8),
+            _historyItem(
+              icon: Icons.local_drink,
+              title: 'Hábito: Agua',
+              date: 'Vie, 15 Ago',
+              subtitle: '2L completados',
+            ),
+            const SizedBox(height: 16),
+            _sectionTitle('Logros'),
+            _achievementsTile(context),
+            const SizedBox(height: 16),
+
             const SizedBox(height: 16),
 
             // Aquí luego añadiremos “Progreso semanal / mensual” o más métricas.
@@ -175,6 +200,360 @@ class ProgressScreen extends StatelessWidget {
                   label,
                   style: const TextStyle(color: Colors.white70, fontSize: 13),
                 ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Abreviaturas de días (Lunes..Domingo)
+  final List<String> _weekDays = const ['L', 'M', 'X', 'J', 'V', 'S', 'D'];
+
+  Widget _weekDot(String label, bool done) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Container(
+          width: 36,
+          height: 36,
+          decoration: BoxDecoration(
+            color: done ? const Color(0xFF16B39A) : const Color(0xFF18382F),
+            shape: BoxShape.circle,
+          ),
+          alignment: Alignment.center,
+          child: Text(
+            label,
+            style: TextStyle(
+              color: done ? Colors.white : Colors.white70,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _weekRow({required List<bool> done}) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: List.generate(7, (i) => _weekDot(_weekDays[i], done[i])),
+    );
+  }
+
+  Widget _monthSummaryCard({
+    required int done,
+    required int target,
+    required int lastMonthDone,
+  }) {
+    final progress = (target == 0) ? 0.0 : (done / target).clamp(0.0, 1.0);
+    final delta = done - lastMonthDone;
+    final isUp = delta >= 0;
+
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: const Color(0xFF18382F),
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Línea 1: número grande + "de X objetivo"
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Text(
+                '$done',
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 26,
+                  fontWeight: FontWeight.w800,
+                ),
+              ),
+              const SizedBox(width: 8),
+              Text(
+                'de $target objetivo',
+                style: const TextStyle(color: Colors.white70),
+              ),
+              const Spacer(),
+              // Comparativa simple con mes pasado
+              Text(
+                '${isUp ? '+' : ''}$delta mes pasado',
+                style: TextStyle(
+                  color: isUp
+                      ? const Color(0xFF16B39A)
+                      : const Color(0xFFFFAFAF),
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+
+          // Barra de progreso
+          ClipRRect(
+            borderRadius: BorderRadius.circular(8),
+            child: LinearProgressIndicator(
+              value: progress,
+              minHeight: 10,
+              backgroundColor: const Color(0xFF1F4A3D),
+              valueColor: const AlwaysStoppedAnimation(Color(0xFF16B39A)),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  final List<bool> _last14Days = const [
+    false,
+    true,
+    true,
+    false,
+    true,
+    true,
+    true,
+    false,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+  ];
+
+  int _currentStreak(List<bool> days) {
+    var c = 0;
+    for (var i = days.length - 1; i >= 0; i--) {
+      if (days[i]) {
+        c++;
+      } else {
+        break;
+      }
+    }
+    return c;
+  }
+
+  Widget _historyItem({
+    required IconData icon,
+    required String title,
+    required String date,
+    required String subtitle,
+  }) {
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: const Color(0xFF18382F),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Container(
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+              color: const Color(0xFF1F4A3D),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            alignment: Alignment.center,
+            child: Icon(icon, color: Colors.white),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  subtitle,
+                  style: const TextStyle(color: Colors.white70, fontSize: 13),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 8),
+          Text(
+            date,
+            style: const TextStyle(color: Colors.white54, fontSize: 12),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _achievementRow(
+    IconData icon,
+    String title,
+    String subtitle,
+    bool unlocked,
+  ) {
+    return ListTile(
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16),
+      leading: CircleAvatar(
+        backgroundColor: const Color(0xFF1F4A3D),
+        child: Icon(
+          icon,
+          color: unlocked ? const Color(0xFF16B39A) : Colors.white70,
+        ),
+      ),
+      title: Text(
+        title,
+        style: const TextStyle(
+          color: Colors.white,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
+      subtitle: Text(subtitle, style: const TextStyle(color: Colors.white70)),
+      trailing: Icon(
+        unlocked ? Icons.check_circle : Icons.lock_outline,
+        color: unlocked ? const Color(0xFF16B39A) : Colors.white54,
+      ),
+    );
+  }
+
+  Widget _achievementsTile(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: const Color(0xFF18382F),
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Theme(
+        data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+        child: ExpansionTile(
+          initiallyExpanded: false,
+          tilePadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          collapsedIconColor: Colors.white70,
+          iconColor: Colors.white70,
+          title: const Text(
+            'Logros',
+            style: TextStyle(color: Colors.white, fontWeight: FontWeight.w700),
+          ),
+          subtitle: const Text(
+            '3/10 desbloqueados',
+            style: TextStyle(color: Colors.white70),
+          ),
+          children: [
+            _achievementRow(
+              Icons.emoji_events,
+              'Primera semana completa',
+              '7 días seguidos',
+              true,
+            ),
+            _achievementRow(
+              Icons.bolt,
+              'Primer PR',
+              'Mejor marca personal',
+              false,
+            ),
+            _achievementRow(
+              Icons.local_fire_department,
+              'Racha 30',
+              '30 días sin fallar',
+              false,
+            ),
+            const SizedBox(height: 12),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /*int _currentStreak(List<bool> days) {
+    var c = 0;
+    for (var i = days.length - 1; i >= 0; i--) {
+      if (days[i])
+        c++;
+      else
+        break;
+    }
+    return c;
+  }*/
+
+  int _bestStreak(List<bool> days) {
+    var best = 0, cur = 0;
+    for (final d in days) {
+      if (d) {
+        cur++;
+        if (cur > best) best = cur;
+      } else {
+        cur = 0;
+      }
+    }
+    return best;
+  }
+
+  int _nextMilestone(int current) {
+    if (current < 7) return 7;
+    if (current < 14) return 14;
+    if (current < 30) return 30;
+    return 60; // siguiente grande; ajustaremos cuando tengamos datos reales
+  }
+
+  Widget _streakCard() {
+    final current = _currentStreak(_last14Days);
+    final best = _bestStreak(_last14Days);
+    final goal = _nextMilestone(current);
+    final progress = (current / goal).clamp(0.0, 1.0);
+    final progressColor = const Color(0xFF16B39A);
+
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: const Color(0xFF18382F),
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Row(
+        children: [
+          // Icono con anillo de progreso
+          SizedBox(
+            width: 44,
+            height: 44,
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                CircularProgressIndicator(
+                  value: progress,
+                  strokeWidth: 4,
+                  backgroundColor: const Color(0xFF1F4A3D),
+                  valueColor: AlwaysStoppedAnimation(progressColor),
+                ),
+                const Icon(Icons.local_fire_department, color: Colors.white),
+              ],
+            ),
+          ),
+          const SizedBox(width: 12),
+
+          // Números y textos
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  '$current días',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 22,
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                const Text(
+                  'Racha',
+                  style: TextStyle(color: Colors.white70, fontSize: 13),
+                ),
+                
               ],
             ),
           ),
