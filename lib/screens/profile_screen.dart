@@ -1,4 +1,6 @@
 import 'package:fitmeeasy/screens/details/day_detail_screen.dart';
+import 'package:fitmeeasy/screens/details/routine_detail_screen.dart';
+import 'package:fitmeeasy/screens/habits_screen.dart';
 import 'package:fitmeeasy/screens/routines_screen.dart';
 import 'package:flutter/material.dart';
 import 'store_screen.dart';
@@ -197,9 +199,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
       title: 'Correr 5k',
       subtitle: '3/5 entrenamientos completados',
       onTap: () {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(const SnackBar(content: Text('Objetivo: Correr 5k')));
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (_) => const RoutineDetailScreen(
+              title: 'Correr 5k',
+              meta: '3 días/semana · Nivel principiante',
+            ),
+          ),
+        );
       },
     );
   }
@@ -210,9 +217,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
       title: 'Beber 2L de agua',
       subtitle: 'Sigue tu ingesta diaria',
       onTap: () {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Hábito: Beber 2L de agua')),
-        );
+        Navigator.of(
+          context,
+        ).push(MaterialPageRoute(builder: (_) => const HabitsScreen()));
       },
     );
   }
