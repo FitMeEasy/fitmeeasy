@@ -1,3 +1,4 @@
+import 'package:fitmeeasy/screens/details/day_detail_screen.dart';
 import 'package:fitmeeasy/screens/routines_screen.dart';
 import 'package:flutter/material.dart';
 import 'store_screen.dart';
@@ -181,9 +182,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
       subtitle: '10 ejercicios • 45 min',
       trailing: const Icon(Icons.play_arrow_rounded, color: Colors.white70),
       onTap: () {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(const SnackBar(content: Text('Full Body Workout')));
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (_) => const DayDetailScreen(title: 'Día 1 — Full Body'),
+          ),
+        );
       },
     );
   }
