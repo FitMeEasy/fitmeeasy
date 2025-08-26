@@ -1,8 +1,13 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class WorkoutPlayerScreen extends StatefulWidget {
-  const WorkoutPlayerScreen({super.key, required this.steps, this.secondsPerStep = 30});
+  const WorkoutPlayerScreen({
+    super.key,
+    required this.steps,
+    this.secondsPerStep = 30,
+  });
 
   final List<String> steps;
   final int secondsPerStep;
@@ -12,6 +17,8 @@ class WorkoutPlayerScreen extends StatefulWidget {
 }
 
 class _WorkoutPlayerScreenState extends State<WorkoutPlayerScreen> {
+  bool _savedToday = false;
+
   int _index = 0;
   int _secondsLeft = 0;
   Timer? _timer;
@@ -44,7 +51,27 @@ class _WorkoutPlayerScreenState extends State<WorkoutPlayerScreen> {
     }
   }
 
-  void _next({bool auto = false}) {
+  Future<void> _markTodayDone() async {
+    if (_savedToday) return;
+    final prefs = await SharedPreferences.getInstance();
+
+    // Semana L..D
+    String weekStr = prefs.getString('week_done') ?? '0000000';
+    final chars = ('${weekStr}0000000').substring(0, 7).split('');
+    final idx = DateTime.now().weekday - 1; // L=0..D=6
+    chars[idx] = '1';
+    await prefs.setString('week_done', chars.join());
+
+    // Últimos 14 días (racha)
+    String last = prefs.getString('last14') ?? '00000000000000';
+    last = ('${last}00000000000000').substring(0, 14);
+    last = '${last.substring(0, 13)}1';
+    await prefs.setString('last14', last);
+
+    _savedToday = true;
+  }
+
+  Future<void> _next({bool auto = false}) async {
     _timer?.cancel();
     if (_index < widget.steps.length - 1) {
       setState(() {
@@ -53,6 +80,7 @@ class _WorkoutPlayerScreenState extends State<WorkoutPlayerScreen> {
         _running = false;
       });
     } else {
+      await _markTodayDone();
       if (!auto && mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('¡Entrenamiento completado!')),
@@ -96,7 +124,11 @@ class _WorkoutPlayerScreenState extends State<WorkoutPlayerScreen> {
             Text(
               step,
               textAlign: TextAlign.center,
-              style: const TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.w700),
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 22,
+                fontWeight: FontWeight.w700,
+              ),
             ),
             const SizedBox(height: 24),
             SizedBox(
@@ -113,14 +145,20 @@ class _WorkoutPlayerScreenState extends State<WorkoutPlayerScreen> {
                   ),
                   Text(
                     _secondsLeft.toString().padLeft(2, '0'),
-                    style: const TextStyle(color: Colors.white, fontSize: 40, fontWeight: FontWeight.bold),
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 40,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ],
               ),
             ),
             const SizedBox(height: 24),
-            Text('${_index + 1}/${widget.steps.length}',
-                style: const TextStyle(color: Colors.white70)),
+            Text(
+              '${_index + 1}/${widget.steps.length}',
+              style: const TextStyle(color: Colors.white70),
+            ),
             const Spacer(),
             Row(
               children: [
@@ -131,7 +169,9 @@ class _WorkoutPlayerScreenState extends State<WorkoutPlayerScreen> {
                       side: const BorderSide(color: Colors.white24),
                       foregroundColor: Colors.white,
                       padding: const EdgeInsets.symmetric(vertical: 14),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
                     ),
                     child: const Text('Anterior'),
                   ),
@@ -143,7 +183,9 @@ class _WorkoutPlayerScreenState extends State<WorkoutPlayerScreen> {
                     style: FilledButton.styleFrom(
                       backgroundColor: const Color(0xFF16B39A),
                       padding: const EdgeInsets.symmetric(vertical: 14),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
                     ),
                     child: Text(_running ? 'Pausa' : 'Iniciar'),
                   ),
@@ -156,7 +198,9 @@ class _WorkoutPlayerScreenState extends State<WorkoutPlayerScreen> {
                       side: const BorderSide(color: Colors.white24),
                       foregroundColor: Colors.white,
                       padding: const EdgeInsets.symmetric(vertical: 14),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
                     ),
                     child: const Text('Siguiente'),
                   ),
