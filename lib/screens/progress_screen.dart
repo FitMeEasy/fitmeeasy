@@ -2,9 +2,41 @@ import 'package:flutter/material.dart';
 import 'profile_screen.dart';
 import 'store_screen.dart';
 import 'routines_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-class ProgressScreen extends StatelessWidget {
+class ProgressScreen extends StatefulWidget {
   const ProgressScreen({super.key});
+
+  @override
+  State<ProgressScreen> createState() => _ProgressScreenState();
+}
+
+class _ProgressScreenState extends State<ProgressScreen> {
+  // semana L..D (7 bools) y últimos 14 días para calcular racha
+  List<bool> _weekDone = List<bool>.filled(7, false);
+  List<bool> _last14Days = List<bool>.filled(14, false);
+
+  @override
+  void initState() {
+    super.initState();
+    _loadProgress();
+  }
+
+  Future<void> _loadProgress() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    // Semana
+    String weekStr = prefs.getString('week_done') ?? '0000000';
+    weekStr = ('${weekStr}0000000').substring(0, 7);
+    _weekDone = weekStr.split('').map((c) => c == '1').toList();
+
+    // Últimos 14 días (para racha)
+    String last = prefs.getString('last14') ?? '00000000000000';
+    last = ('${last}00000000000000').substring(0, 14);
+    _last14Days = last.split('').map((c) => c == '1').toList();
+
+    if (mounted) setState(() {});
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +71,7 @@ class ProgressScreen extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             _sectionTitle('Esta semana'),
-            _weekRow(done: const [true, true, false, true, false, false, true]),
+            _weekRow(done: _weekDone),
             //_monthSummaryCard(done: 8, target: 16, lastMonthDone: 6),
             const SizedBox(height: 24),
 
@@ -307,7 +339,7 @@ class ProgressScreen extends StatelessWidget {
     );
   }
 
-  final List<bool> _last14Days = const [
+  /*final List<bool> _last14Days = const [
     false,
     true,
     true,
@@ -322,7 +354,7 @@ class ProgressScreen extends StatelessWidget {
     true,
     true,
     true,
-  ];
+  ];*/
 
   int _currentStreak(List<bool> days) {
     var c = 0;
@@ -479,18 +511,18 @@ class ProgressScreen extends StatelessWidget {
     return c;
   }*/
 
-  int _bestStreak(List<bool> days) {
-    var best = 0, cur = 0;
-    for (final d in days) {
-      if (d) {
-        cur++;
-        if (cur > best) best = cur;
-      } else {
-        cur = 0;
-      }
-    }
-    return best;
-  }
+  // int _bestStreak(List<bool> days) {
+  //   var best = 0, cur = 0;
+  //   for (final d in days) {
+  //     if (d) {
+  //       cur++;
+  //       if (cur > best) best = cur;
+  //     } else {
+  //       cur = 0;
+  //     }
+  //   }
+  //   return best;
+  // }
 
   int _nextMilestone(int current) {
     if (current < 7) return 7;
@@ -501,7 +533,7 @@ class ProgressScreen extends StatelessWidget {
 
   Widget _streakCard() {
     final current = _currentStreak(_last14Days);
-    final best = _bestStreak(_last14Days);
+    //final best = _bestStreak(_last14Days);
     final goal = _nextMilestone(current);
     final progress = (current / goal).clamp(0.0, 1.0);
     final progressColor = const Color(0xFF16B39A);
@@ -553,7 +585,6 @@ class ProgressScreen extends StatelessWidget {
                   'Racha',
                   style: TextStyle(color: Colors.white70, fontSize: 13),
                 ),
-                
               ],
             ),
           ),

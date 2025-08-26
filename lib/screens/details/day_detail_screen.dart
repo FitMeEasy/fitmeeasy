@@ -1,3 +1,4 @@
+import 'package:fitmeeasy/screens/workout_player_screen.dart';
 import 'package:flutter/material.dart';
 
 class ExerciseItem {
@@ -165,6 +166,30 @@ class _DayDetailScreenState extends State<DayDetailScreen> {
             final exIndex = i - 2;
             return _exerciseTile(exIndex);
           },
+        ),
+      ),
+      bottomNavigationBar: SafeArea(
+        minimum: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+        child: SizedBox(
+          width: double.infinity,
+          child: FilledButton(
+            style: FilledButton.styleFrom(
+              backgroundColor: const Color(0xFF16B39A),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+              padding: const EdgeInsets.symmetric(vertical: 14),
+            ),
+            onPressed: () {
+              final steps = _exercises.map((e) => e.name).toList();
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (_) => WorkoutPlayerScreen(steps: steps),
+                ),
+              );
+            },
+            child: const Text('Empezar'),
+          ),
         ),
       ),
     );
