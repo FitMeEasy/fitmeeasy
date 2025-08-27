@@ -1,6 +1,6 @@
 import 'dart:ui';
 
-import 'package:fitmeeasy/screens/profile_screen.dart';
+import 'package:fitmeeasy/screens/home_sheld.dart';
 import 'package:flutter/material.dart';
 
 class LogInScreen extends StatefulWidget {
@@ -237,8 +237,8 @@ class _LogInScreenState extends State<LogInScreen> {
       return;
     }
 
-    Navigator.of(
-      context,
-    ).pushReplacement(MaterialPageRoute(builder: (_) => const ProfileScreen()));
+    Navigator.of(context).pushReplacement(
+  MaterialPageRoute(builder: (_) => const HomeShell()),
+);
   }
 }

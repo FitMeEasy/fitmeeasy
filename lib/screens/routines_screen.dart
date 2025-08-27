@@ -1,8 +1,6 @@
 import 'package:fitmeeasy/screens/details/routine_detail_screen.dart';
 import 'package:flutter/material.dart';
-import 'profile_screen.dart'; // para volver a Home desde la bottom bar
-import 'store_screen.dart';
-import 'progress_screen.dart';
+// para volver a Home desde la bottom bar
 
 class RoutinesScreen extends StatelessWidget {
   const RoutinesScreen({super.key});
@@ -18,71 +16,71 @@ class RoutinesScreen extends StatelessWidget {
         title: const Text('Rutinas'),
         centerTitle: true,
       ),
-      bottomNavigationBar: NavigationBarTheme(
-        data: NavigationBarThemeData(
-          labelTextStyle: WidgetStateProperty.resolveWith<TextStyle?>(
-            (states) => TextStyle(
-              color: states.contains(WidgetState.selected)
-                  ? Colors.white
-                  : Colors.white70,
-              fontSize: 12,
-            ),
-          ),
-          iconTheme: WidgetStateProperty.resolveWith<IconThemeData?>(
-            (states) => IconThemeData(
-              color: states.contains(WidgetState.selected)
-                  ? Colors.white
-                  : Colors.white70,
-            ),
-          ),
-        ),
-        child: NavigationBar(
-          selectedIndex: 3, // Rutinas
-          onDestinationSelected: (i) {
-            if (i == 0) {
-              Navigator.of(context).pushReplacement(
-                MaterialPageRoute(builder: (_) => const ProfileScreen()),
-              );
-            } else if (i == 1) {
-              Navigator.of(context).pushReplacement(
-                MaterialPageRoute(builder: (_) => const StoreScreen()),
-              );
-            } else if (i == 2) {
-              Navigator.of(context).pushReplacement(
-                MaterialPageRoute(builder: (_) => const ProgressScreen()),
-              );
-            } else if (i != 3) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Sección aún no disponible')),
-              );
-            }
-          },
-          backgroundColor: const Color(0xFF18382F), // mismo que Home
-          indicatorColor: const Color(0xFF2A5A4B), // mismo que Home
-          destinations: const [
-            NavigationDestination(
-              icon: Icon(Icons.home_outlined),
-              selectedIcon: Icon(Icons.home),
-              label: 'Inicio',
-            ),
-            NavigationDestination(
-              icon: Icon(Icons.storefront_outlined),
-              selectedIcon: Icon(Icons.storefront),
-              label: 'Tienda',
-            ),
-            NavigationDestination(
-              icon: Icon(Icons.show_chart_outlined),
-              selectedIcon: Icon(Icons.show_chart),
-              label: 'Progreso',
-            ),
-            NavigationDestination(
-              icon: Icon(Icons.fitness_center_outlined),
-              selectedIcon: Icon(Icons.fitness_center),
-              label: 'Rutinas',
-            ),
-          ],
-        ),
-      ),
+      // bottomNavigationBar: NavigationBarTheme(
+      //   data: NavigationBarThemeData(
+      //     labelTextStyle: WidgetStateProperty.resolveWith<TextStyle?>(
+      //       (states) => TextStyle(
+      //         color: states.contains(WidgetState.selected)
+      //             ? Colors.white
+      //             : Colors.white70,
+      //         fontSize: 12,
+      //       ),
+      //     ),
+      //     iconTheme: WidgetStateProperty.resolveWith<IconThemeData?>(
+      //       (states) => IconThemeData(
+      //         color: states.contains(WidgetState.selected)
+      //             ? Colors.white
+      //             : Colors.white70,
+      //       ),
+      //     ),
+      //   ),
+      //   child: NavigationBar(
+      //     selectedIndex: 3, // Rutinas
+      //     onDestinationSelected: (i) {
+      //       if (i == 0) {
+      //         Navigator.of(context).pushReplacement(
+      //           MaterialPageRoute(builder: (_) => const ProfileScreen()),
+      //         );
+      //       } else if (i == 1) {
+      //         Navigator.of(context).pushReplacement(
+      //           MaterialPageRoute(builder: (_) => const StoreScreen()),
+      //         );
+      //       } else if (i == 2) {
+      //         Navigator.of(context).pushReplacement(
+      //           MaterialPageRoute(builder: (_) => const ProgressScreen()),
+      //         );
+      //       } else if (i != 3) {
+      //         ScaffoldMessenger.of(context).showSnackBar(
+      //           const SnackBar(content: Text('Sección aún no disponible')),
+      //         );
+      //       }
+      //     },
+      //     backgroundColor: const Color(0xFF18382F), // mismo que Home
+      //     indicatorColor: const Color(0xFF2A5A4B), // mismo que Home
+      //     destinations: const [
+      //       NavigationDestination(
+      //         icon: Icon(Icons.home_outlined),
+      //         selectedIcon: Icon(Icons.home),
+      //         label: 'Inicio',
+      //       ),
+      //       NavigationDestination(
+      //         icon: Icon(Icons.storefront_outlined),
+      //         selectedIcon: Icon(Icons.storefront),
+      //         label: 'Tienda',
+      //       ),
+      //       NavigationDestination(
+      //         icon: Icon(Icons.show_chart_outlined),
+      //         selectedIcon: Icon(Icons.show_chart),
+      //         label: 'Progreso',
+      //       ),
+      //       NavigationDestination(
+      //         icon: Icon(Icons.fitness_center_outlined),
+      //         selectedIcon: Icon(Icons.fitness_center),
+      //         label: 'Rutinas',
+      //       ),
+      //     ],
+      //   ),
+      // ),
 
       // en el siguiente paso pondremos la bottom bar y el contenido
       body: Padding(
