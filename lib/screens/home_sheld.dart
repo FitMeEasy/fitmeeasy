@@ -6,14 +6,15 @@ import 'progress_screen.dart';
 import 'routines_screen.dart';
 
 class HomeShell extends StatefulWidget {
-  const HomeShell({super.key});
+  const HomeShell({super.key, this.initialIndex = 0});
+  final int initialIndex;
 
   @override
   State<HomeShell> createState() => _HomeShellState();
 }
 
 class _HomeShellState extends State<HomeShell> {
-  int _index = 0;
+  late int _index = widget.initialIndex;
 
   // Cada tab mantiene su propio estado gracias a IndexedStack.
   final _tabs = const [
