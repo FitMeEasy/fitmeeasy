@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import '../data/local_storage/prefs_service.dart';
 
 class HabitsScreen extends StatefulWidget {
   const HabitsScreen({super.key});
@@ -86,7 +86,7 @@ class _HabitsScreenState extends State<HabitsScreen> {
                   onChanged: (v) async {
                     setState(() => h.enabled = v);
                     if (v) {
-                      await _markTodayDone();
+                      await PrefsService.markTodayDone();
                       if (!mounted) return;
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
@@ -102,22 +102,5 @@ class _HabitsScreenState extends State<HabitsScreen> {
         ),
       ),
     );
-  }
-
-  Future<void> _markTodayDone() async {
-    final prefs = await SharedPreferences.getInstance();
-
-    // Semana L..D
-    String weekStr = prefs.getString('week_done') ?? '0000000';
-    final chars = ('${weekStr}0000000').substring(0, 7).split('');
-    final idx = DateTime.now().weekday - 1; // L=0..D=6
-    chars[idx] = '1';
-    await prefs.setString('week_done', chars.join());
-
-    // Racha: últimos 14 días (marcamos el último como 1)
-    String last = prefs.getString('last14') ?? '00000000000000';
-    last = ('${last}00000000000000').substring(0, 14);
-    last = '${last.substring(0, 13)}1'; // set último día a '1'
-    await prefs.setString('last14', last);
   }
 }

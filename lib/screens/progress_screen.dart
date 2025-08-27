@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'profile_screen.dart';
 import 'store_screen.dart';
 import 'routines_screen.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import '../theme/app_colors.dart';
+import '../widgets/section_title.dart';
+import '../widgets/week_row.dart';
+import '../data/local_storage/prefs_service.dart';
 
 class ProgressScreen extends StatefulWidget {
   const ProgressScreen({super.key});
@@ -23,27 +26,21 @@ class _ProgressScreenState extends State<ProgressScreen> {
   }
 
   Future<void> _loadProgress() async {
-    final prefs = await SharedPreferences.getInstance();
-
-    // Semana
-    String weekStr = prefs.getString('week_done') ?? '0000000';
-    weekStr = ('${weekStr}0000000').substring(0, 7);
-    _weekDone = weekStr.split('').map((c) => c == '1').toList();
-
-    // Últimos 14 días (para racha)
-    String last = prefs.getString('last14') ?? '00000000000000';
-    last = ('${last}00000000000000').substring(0, 14);
-    _last14Days = last.split('').map((c) => c == '1').toList();
-
-    if (mounted) setState(() {});
+    final week = await PrefsService.getWeekDone();
+    final last = await PrefsService.getLast14();
+    if (!mounted) return;
+    setState(() {
+      _weekDone = week;
+      _last14Days = last;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF0F2C24),
+      backgroundColor: AppColors.bg,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF0F2C24),
+        backgroundColor: AppColors.bg,
         foregroundColor: Colors.white,
         elevation: 0,
         title: const Text('Progreso'),
@@ -53,7 +50,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
         padding: const EdgeInsets.all(16),
         child: ListView(
           children: [
-            _sectionTitle('Resumen'),
+            SectionTitle('Resumen'),
             const SizedBox(height: 8),
             Row(
               children: [
@@ -62,7 +59,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
                 Expanded(
                   child: _statCard(
                     icon: Icons.star_rounded, // ⭐
-                    iconBg: const Color(0xFF1F4A3D),
+                    iconBg: AppColors.cardAlt,
                     value: '1.250',
                     label: 'Puntos',
                   ),
@@ -70,12 +67,10 @@ class _ProgressScreenState extends State<ProgressScreen> {
               ],
             ),
             const SizedBox(height: 16),
-            _sectionTitle('Esta semana'),
-            _weekRow(done: _weekDone),
-            //_monthSummaryCard(done: 8, target: 16, lastMonthDone: 6),
+            SectionTitle('Esta semana'),
+            WeekRow(done: _weekDone),
             const SizedBox(height: 24),
-
-            _sectionTitle('Historial reciente'),
+            SectionTitle('Historial reciente'),
             _historyItem(
               icon: Icons.check_circle,
               title: 'Día 1 — Full Body',
@@ -97,7 +92,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
               subtitle: '2L completados',
             ),
             const SizedBox(height: 16),
-            _sectionTitle('Logros'),
+            SectionTitle('Logros'),
             _achievementsTile(context),
             const SizedBox(height: 16),
 
@@ -144,7 +139,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
               );
             }
           },
-          backgroundColor: const Color(0xFF18382F),
+          backgroundColor: AppColors.bg,
           indicatorColor: const Color(0xFF2A5A4B),
           destinations: const [
             NavigationDestination(
@@ -173,26 +168,12 @@ class _ProgressScreenState extends State<ProgressScreen> {
     );
   }
 
-  Widget _sectionTitle(String text) {
-    return Padding(
-      padding: const EdgeInsets.only(left: 4, bottom: 4),
-      child: Text(
-        text,
-        style: const TextStyle(
-          color: Colors.white,
-          fontWeight: FontWeight.w700,
-          fontSize: 16,
-        ),
-      ),
-    );
-  }
-
   Widget _statCard({
     required IconData icon,
     required String value,
     required String label,
-    Color bg = const Color(0xFF18382F),
-    Color iconBg = const Color(0xFF1F4A3D),
+    Color bg = AppColors.bg,
+    Color iconBg = AppColors.cardAlt,
   }) {
     return Container(
       padding: const EdgeInsets.all(14),
@@ -240,58 +221,6 @@ class _ProgressScreenState extends State<ProgressScreen> {
     );
   }
 
-  // Abreviaturas de días (Lunes..Domingo)
-  final List<String> _weekDays = const ['L', 'M', 'X', 'J', 'V', 'S', 'D'];
-
-  Widget _weekDot(String label, bool done) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Container(
-          width: 36,
-          height: 36,
-          decoration: BoxDecoration(
-            color: done ? const Color(0xFF16B39A) : const Color(0xFF18382F),
-            shape: BoxShape.circle,
-          ),
-          alignment: Alignment.center,
-          child: Text(
-            label,
-            style: TextStyle(
-              color: done ? Colors.white : Colors.white70,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _weekRow({required List<bool> done}) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: List.generate(7, (i) => _weekDot(_weekDays[i], done[i])),
-    );
-  }
-
-
-  /*final List<bool> _last14Days = const [
-    false,
-    true,
-    true,
-    false,
-    true,
-    true,
-    true,
-    false,
-    true,
-    true,
-    true,
-    true,
-    true,
-    true,
-  ];*/
-
   int _currentStreak(List<bool> days) {
     var c = 0;
     for (var i = days.length - 1; i >= 0; i--) {
@@ -313,7 +242,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: const Color(0xFF18382F),
+        color: AppColors.card,
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
@@ -323,7 +252,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
             width: 40,
             height: 40,
             decoration: BoxDecoration(
-              color: const Color(0xFF1F4A3D),
+              color: AppColors.cardAlt,
               borderRadius: BorderRadius.circular(10),
             ),
             alignment: Alignment.center,
@@ -368,11 +297,8 @@ class _ProgressScreenState extends State<ProgressScreen> {
     return ListTile(
       contentPadding: const EdgeInsets.symmetric(horizontal: 16),
       leading: CircleAvatar(
-        backgroundColor: const Color(0xFF1F4A3D),
-        child: Icon(
-          icon,
-          color: unlocked ? const Color(0xFF16B39A) : Colors.white70,
-        ),
+        backgroundColor: AppColors.cardAlt,
+        child: Icon(icon, color: unlocked ? AppColors.accent : Colors.white70),
       ),
       title: Text(
         title,
@@ -384,7 +310,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
       subtitle: Text(subtitle, style: const TextStyle(color: Colors.white70)),
       trailing: Icon(
         unlocked ? Icons.check_circle : Icons.lock_outline,
-        color: unlocked ? const Color(0xFF16B39A) : Colors.white54,
+        color: unlocked ? AppColors.accent : Colors.white54,
       ),
     );
   }
@@ -392,7 +318,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
   Widget _achievementsTile(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: const Color(0xFF18382F),
+        color: AppColors.card,
         borderRadius: BorderRadius.circular(16),
       ),
       child: Theme(
@@ -472,12 +398,12 @@ class _ProgressScreenState extends State<ProgressScreen> {
     //final best = _bestStreak(_last14Days);
     final goal = _nextMilestone(current);
     final progress = (current / goal).clamp(0.0, 1.0);
-    final progressColor = const Color(0xFF16B39A);
+    final progressColor = AppColors.accent;
 
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: const Color(0xFF18382F),
+        color: AppColors.card,
         borderRadius: BorderRadius.circular(16),
       ),
       child: Row(
@@ -492,7 +418,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
                 CircularProgressIndicator(
                   value: progress,
                   strokeWidth: 4,
-                  backgroundColor: const Color(0xFF1F4A3D),
+                  backgroundColor: AppColors.cardAlt,
                   valueColor: AlwaysStoppedAnimation(progressColor),
                 ),
                 const Icon(Icons.local_fire_department, color: Colors.white),

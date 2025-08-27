@@ -1,4 +1,5 @@
 import 'package:fitmeeasy/Screens/log_in_screen.dart';
+import 'package:fitmeeasy/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -10,6 +11,9 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(home: LogInScreen());//no cal const?
+    return MaterialApp(
+      theme: buildAppTheme(),
+      home: LogInScreen(),
+    ); //no cal const?
   }
 }

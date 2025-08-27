@@ -1,6 +1,6 @@
+import 'package:fitmeeasy/data/local_storage/prefs_service.dart';
 import 'package:fitmeeasy/screens/workout_player_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class ExerciseItem {
   ExerciseItem({
@@ -26,27 +26,6 @@ class DayDetailScreen extends StatefulWidget {
 }
 
 class _DayDetailScreenState extends State<DayDetailScreen> {
-  bool _savedToday = false;
-  Future<void> _markTodayDone() async {
-    if (_savedToday) return;
-    final prefs = await SharedPreferences.getInstance();
-
-    // Semana L..D
-    String weekStr = prefs.getString('week_done') ?? '0000000';
-    final chars = ('${weekStr}0000000').substring(0, 7).split('');
-    final idx = DateTime.now().weekday - 1; // L=0..D=6
-    chars[idx] = '1';
-    await prefs.setString('week_done', chars.join());
-
-    // Últimos 14 días (racha)
-    String last = prefs.getString('last14') ?? '00000000000000';
-    last = ('${last}00000000000000').substring(0, 14);
-    last = '${last.substring(0, 13)}1';
-    await prefs.setString('last14', last);
-
-    _savedToday = true;
-  }
-
   final List<ExerciseItem> _exercises = [
     ExerciseItem(
       name: 'Calentamiento',
@@ -108,7 +87,7 @@ class _DayDetailScreenState extends State<DayDetailScreen> {
     setState(() => _exercises[index].done = v ?? false);
     final allDone = _exercises.every((e) => e.done);
     if (allDone) {
-      await _markTodayDone();
+      await PrefsService.markTodayDone();
       if (!mounted) return;
       ScaffoldMessenger.of(
         context,

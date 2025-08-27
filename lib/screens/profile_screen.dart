@@ -2,6 +2,8 @@ import 'package:fitmeeasy/screens/details/day_detail_screen.dart';
 import 'package:fitmeeasy/screens/details/routine_detail_screen.dart';
 import 'package:fitmeeasy/screens/habits_screen.dart';
 import 'package:fitmeeasy/screens/routines_screen.dart';
+import 'package:fitmeeasy/theme/app_colors.dart';
+import 'package:fitmeeasy/widgets/dashboard_card.dart';
 import 'package:flutter/material.dart';
 import 'store_screen.dart';
 import 'progress_screen.dart';
@@ -17,9 +19,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF0F2C24), // verde oscuro base (temporal)
+      backgroundColor: AppColors.bg, // verde oscuro base (temporal)
       appBar: AppBar(
-        backgroundColor: const Color(0xFF0F2C24),
+        backgroundColor: AppColors.bg,
         foregroundColor: Colors.white, // <- texto e iconos en blanco
         elevation: 0,
         title: const Text('Home'),
@@ -69,7 +71,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             }
           },
 
-          backgroundColor: const Color(0xFF18382F), // <- más claro
+          backgroundColor: AppColors.card, // <- más claro
           indicatorColor: const Color(0xFF2A5A4B), // <- resaltado suave
           destinations: const [
             NavigationDestination(
@@ -123,7 +125,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: const Color(0xFF18382F), // tarjeta verde oscura
+        color: AppColors.card, // tarjeta verde oscura
         borderRadius: BorderRadius.circular(16),
       ),
       child: Row(
@@ -131,7 +133,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           // Avatar
           const CircleAvatar(
             radius: 32,
-            backgroundColor: Color(0xFF1F4A3D),
+            backgroundColor: AppColors.cardAlt,
             child: Icon(Icons.person, color: Colors.white, size: 32),
           ),
           const SizedBox(width: 16),
@@ -221,93 +223,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
           context,
         ).push(MaterialPageRoute(builder: (_) => const HabitsScreen()));
       },
-    );
-  }
-}
-
-class DashboardCard extends StatelessWidget {
-  const DashboardCard({
-    super.key,
-    required this.leading,
-    required this.title,
-    required this.subtitle,
-    this.onTap,
-    this.trailing = const Icon(
-      Icons.arrow_forward_rounded,
-      color: Colors.white70,
-    ),
-    this.bgColor = const Color(0xFF18382F),
-    this.leadingBg = const Color(0xFF1F4A3D),
-  });
-
-  final Widget leading; // icono o imagen (lo que quieras delante)
-  final String title; // texto principal
-  final String subtitle; // texto secundario
-  final VoidCallback? onTap; // acción al tocar
-  final Widget trailing; // flecha/play/etc.
-  final Color bgColor; // color tarjeta
-  final Color leadingBg; // color fondo del cuadrito
-
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-      color: bgColor,
-      borderRadius: BorderRadius.circular(16),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(16),
-        onTap: onTap,
-        child: Padding(
-          padding: const EdgeInsets.all(12),
-          child: Row(
-            children: [
-              // Cuadradito con fondo y el 'leading' centrado
-              Container(
-                width: 48,
-                height: 48,
-                decoration: BoxDecoration(
-                  color: leadingBg,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                alignment: Alignment.center,
-                child: leading,
-              ),
-              const SizedBox(width: 12),
-
-              // Títulos
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      title,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w600,
-                        fontSize: 15,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      subtitle,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        color: Colors.white70,
-                        fontSize: 13,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-
-              const SizedBox(width: 8),
-              trailing,
-            ],
-          ),
-        ),
-      ),
     );
   }
 }
