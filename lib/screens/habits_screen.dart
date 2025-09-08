@@ -82,7 +82,7 @@ class _HabitsScreenState extends State<HabitsScreen> {
                 ),
                 trailing: Switch(
                   value: h.enabled,
-                  activeColor: const Color(0xFF16B39A),
+                  activeThumbColor: const Color(0xFF16B39A),
                   onChanged: (v) async {
                     setState(() => h.enabled = v);
                     if (v) {
